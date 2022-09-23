@@ -75,20 +75,28 @@ export default function Login({ status, canResetPassword }) {
                         <span className="ml-2 text-sm text-gray-600">Remember me</span>
                     </label>
                 </div>
-
-                <div className="flex items-center justify-end mt-4">
+                <div className="flex items-center justify-center mt-4">
+                    <PrimaryButton className="ml-4" processing={processing}>
+                        Log in
+                    </PrimaryButton>
+                </div>
+                <div className="flex items-center justify-center mt-4">
                     {canResetPassword && (
                         <Link
                             href={route('password.request')}
-                            className="underline text-sm text-gray-600 hover:text-gray-900"
+                            className="d-block underline text-sm text-gray-600 hover:text-gray-900"
                         >
                             Forgot your password?
                         </Link>
                     )}
-
-                    <PrimaryButton className="ml-4" processing={processing}>
-                        Log in
-                    </PrimaryButton>
+                </div>
+                <div className="flex items-center justify-center mt-4">
+                    <Link
+                        href={route('register')}
+                        className="d-block underline text-sm text-gray-600 hover:text-gray-900"
+                    >
+                        Register
+                    </Link>
                 </div>
             </form>
         </GuestLayout>
