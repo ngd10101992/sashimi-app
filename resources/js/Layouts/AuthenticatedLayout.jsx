@@ -40,19 +40,19 @@ export default function Authenticated({ auth, children }) {
       <div className={themeMode ? 'light' : 'dark'}>
         <Modal ref={modalRef} />
         <div className={`${light.backgroundClass} ${dark.backgroundClass} h-screen overflow-hidden`}>
-            <nav className={`${light.backgroundClass} ${dark.backgroundClass} ${light.borderClass} ${dark.borderClass} border-b fixed w-screen max-h-16`}>
+          <nav className={`${light.backgroundClass} ${dark.backgroundClass} ${light.borderClass} ${dark.borderClass} border-b fixed w-screen max-h-16`}>
             <div className="mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex justify-between h-16">
+              <div className="flex justify-between h-16">
                 <div className="flex">
-                    <div className="shrink-0 flex items-center">
-                    <Link href="/">
-                      <ApplicationLogo color={themeMode ? light.textColor : dark.textColor} />
-                    </Link>
-                    </div>
+                  <div className="shrink-0 flex items-center">
+                  <Link href="/">
+                    <ApplicationLogo color={themeMode ? light.textColor : dark.textColor} />
+                  </Link>
+                  </div>
 
-                    <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                      <NavLink href={route('room')} active={route().current('room')}>Room</NavLink>
-                    </div>
+                  <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                    <NavLink href={route('room')} active={route().current('room')}>Room</NavLink>
+                  </div>
                 </div>
 
                 <div className="hidden sm:flex sm:items-center sm:ml-6">
@@ -60,9 +60,9 @@ export default function Authenticated({ auth, children }) {
                   <div className="ml-3"><Notification color={themeMode ? light.textColor : dark.textColor} /></div>
                   <div className="ml-3 relative">
                     <div className={` ${light.borderClass} ${dark.borderClass} border-l ml-6 pl-6`}>
-                        <button onClick={() => SetThemeMode(!themeMode)} className="inline-flex items-center p-2 font-medium focus:outline-none transition ease-in-out duration-150">
-                          {themeMode ? <Sun /> : <Moon color="white" />}
-                        </button>
+                      <button onClick={() => SetThemeMode(!themeMode)} className="inline-flex items-center p-2 font-medium focus:outline-none transition ease-in-out duration-150">
+                        {themeMode ? <Sun /> : <Moon color="white" />}
+                      </button>
                       </div>
                     </div>
                   <div className="ml-3 relative">
@@ -94,28 +94,28 @@ export default function Authenticated({ auth, children }) {
                   </svg>
                   </button>
                 </div>
-                </div>
+              </div>
             </div>
 
             <div className={(showingNavigationDropdown ? 'block' : 'hidden') + ' sm:hidden'}>
-                <div className="pt-2 pb-3 space-y-1">
+              <div className="pt-2 pb-3 space-y-1">
                 <ResponsiveNavLink href={route('room')} active={route().current('room')}>Room</ResponsiveNavLink>
                 </div>
 
                 <div className="pt-4 pb-1 border-t border-gray-200">
                 <div className="px-4">
-                    <div className="font-medium text-base text-gray-800">{auth.user.name}</div>
-                    <div className="font-medium text-sm text-gray-500">{auth.user.email}</div>
+                  <div className="font-medium text-base text-gray-800">{auth.user.name}</div>
+                  <div className="font-medium text-sm text-gray-500">{auth.user.email}</div>
                 </div>
 
                 <div className="mt-3 space-y-1">
-                    <ResponsiveNavLink method="post" href={route('logout')} as="button">Log Out</ResponsiveNavLink>
+                  <ResponsiveNavLink method="post" href={route('logout')} as="button">Log Out</ResponsiveNavLink>
                 </div>
-                </div>
+              </div>
             </div>
-            </nav>
+          </nav>
 
-            <main>{children}</main>
+          <main>{children}</main>
         </div>
       </div>
     </ThemeContextProvider>
