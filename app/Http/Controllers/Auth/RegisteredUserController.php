@@ -44,7 +44,7 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'avatar' => env('APP_URL', 'http://localhost').'/images/avatar.jpg'
+            'avatar' => '/images/avatar.jpg'
         ]);
 
         event(new Registered($user));

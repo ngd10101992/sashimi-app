@@ -7,7 +7,7 @@ import Alert from '@/Components/Alert'
 export default function Profile({ info }) {
   const [avatarSrc, SetAvatarSrc] = useState(info.avatar)
   const inputAvatar = useRef(null)
-  const [message, SetMessage] = useState(null)
+  const [alert, SetAlert] = useState({message: '', type: 'success'})
 
   const { data, setData, post, progress, errors } = useForm({
     avatar: null,
@@ -29,15 +29,24 @@ export default function Profile({ info }) {
     post(route('avatar'), {
       preserveScroll: true,
       onSuccess: ({props}) => {
-        console.log(props);
-        SetMessage(props.flash.success.message)
-      },
+        if (props.flash.success) {
+          SetAlert({
+            message: props.flash.success.message,
+            type: 'success'
+          })
+        } else {
+          SetAlert({
+            message: props.flash.error.message,
+            type: 'error'
+          })
+        }
+      }
     })
   }
 
   return (
     <form onSubmit={handleSubmitAvatar}>
-      {message && <Alert message={message} />}
+      {alert.message && <Alert message={alert.message} type={alert.type} />}
       <div className="flex items-center space-x-6">
         <div className="shrink-0">
           <img className="h-16 w-16 object-cover rounded-full" src={avatarSrc} />

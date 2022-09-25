@@ -20,9 +20,9 @@ export default function Authenticated({ auth, children }) {
 
   useEffect(() => {
     if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      SetThemeMode(true)
-    } else {
       SetThemeMode(false)
+    } else {
+      SetThemeMode(true)
     }
   }, [])
 
