@@ -5,14 +5,14 @@ const themes = {
   light: {
     textColor: colors.slate[900],
     textClass: 'text-slate-900',
-    borderClass: "border-slate-200",
-    backgroundClass: "bg-slate-100"
+    borderClass: 'border-slate-200',
+    backgroundClass: 'bg-slate-100',
   },
   dark: {
     textColor: colors.slate[50],
     textClass: 'dark:text-slate-50',
-    borderClass: "dark:border-slate-800",
-    backgroundClass: "dark:bg-slate-900"
+    borderClass: 'dark:border-slate-800',
+    backgroundClass: 'dark:bg-slate-900'
   }
 }
 

@@ -29,7 +29,7 @@ export default function Authenticated({ auth, children }) {
   function openModalProfile() {
     const data = {
       header: <h3 className={`${light.textClass} ${dark.textClass}`}>Profile</h3>,
-      body: <Profile />
+      body: <Profile info={auth.user} />
     }
 
     modalRef.current.open(data)
@@ -46,12 +46,12 @@ export default function Authenticated({ auth, children }) {
                 <div className="flex">
                     <div className="shrink-0 flex items-center">
                     <Link href="/">
-                        <ApplicationLogo color={themeMode ? light.textColor : dark.textColor} />
+                      <ApplicationLogo color={themeMode ? light.textColor : dark.textColor} />
                     </Link>
                     </div>
 
                     <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <NavLink href={route('room')} active={route().current('room')}>Room</NavLink>
+                      <NavLink href={route('room')} active={route().current('room')}>Room</NavLink>
                     </div>
                 </div>
 
