@@ -10,12 +10,15 @@ import Dropdown from '@/Components/Dropdown'
 import NavLink from '@/Components/NavLink'
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink'
 import Modal from '@/Components/Modal'
-import Profile from '@/Pages/Profile'
+import Avatar from '@/Pages/Profile/Avatar'
+import Info from '@/Pages/Profile/Info'
+import Password from '@/Pages/Profile/Password'
 
 export default function Authenticated({ auth, children }) {
   const { light, dark } = useTheme()
   const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
   const [themeMode, SetThemeMode] = useState(true)
+  const [profileTab, SetprofileTab] = useState('avatar')
   const modalRef = useRef()
 
   useEffect(() => {
@@ -26,10 +29,34 @@ export default function Authenticated({ auth, children }) {
     }
   }, [])
 
+  useEffect(() => {
+    openModalProfile()
+  }, [profileTab])
+
   function openModalProfile() {
+    let body = <Avatar info={auth.user} />
+    switch (profileTab) {
+      case 'info':
+        body = <Info info={auth.user} />
+        break;
+      case 'password':
+        body = <Password info={auth.user} />
+        break;
+      default:
+        break;
+    }
     const data = {
-      header: <h3 className={`${light.textClass} ${dark.textClass}`}>Profile</h3>,
-      body: <Profile info={auth.user} />
+      header: (
+        <>
+          <button className={`h-full dark:text-white inline-flex items-center px-7 ${profileTab === 'avatar' ? 'border-b-2 border-indigo-400 dark:border-cyan-500 ' : ''}text-sm text-gray-900 focus:outline-none focus:border-indigo-700 transition duration-150 ease-in-out`} onClick={() => SetprofileTab('avatar')}>Avatar</button>
+          <button className={`h-full dark:text-white inline-flex items-center px-7 ${profileTab === 'info' ? 'border-b-2 border-indigo-400 dark:border-cyan-500 ' : ''}text-sm text-gray-900 focus:outline-none focus:border-indigo-700 transition duration-150 ease-in-out`} onClick={() => SetprofileTab('info')}>Info</button>
+          <button className={`h-full dark:text-white inline-flex items-center px-7 ${profileTab === 'password' ? 'border-b-2 border-indigo-400 dark:border-cyan-500 ' : ''}text-sm text-gray-900 focus:outline-none focus:border-indigo-700 transition duration-150 ease-in-out`} onClick={() => SetprofileTab('password')}>Password</button>
+        </>
+      ),
+      // header: (
+      //   <h3 className={`${light.textClass} ${dark.textClass}`}>Profile</h3>
+      // ),
+      body: body
     }
 
     modalRef.current.open(data)

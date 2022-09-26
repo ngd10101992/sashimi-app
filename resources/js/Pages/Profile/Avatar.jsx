@@ -4,7 +4,7 @@ import Button from '@/Components/Button'
 import Alert from '@/Components/Alert'
 
 
-export default function Profile({ info }) {
+export default function Avatar({ info }) {
   const [avatarSrc, SetAvatarSrc] = useState(info.avatar)
   const inputAvatar = useRef(null)
   const [alert, SetAlert] = useState({message: '', type: 'success'})
