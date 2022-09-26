@@ -53,9 +53,6 @@ export default function Authenticated({ auth, children }) {
           <button className={`h-full dark:text-white inline-flex items-center px-7 ${profileTab === 'password' ? 'border-b-2 border-indigo-400 dark:border-cyan-500 ' : ''}text-sm text-gray-900 focus:outline-none focus:border-indigo-700 transition duration-150 ease-in-out`} onClick={() => SetprofileTab('password')}>Password</button>
         </>
       ),
-      // header: (
-      //   <h3 className={`${light.textClass} ${dark.textClass}`}>Profile</h3>
-      // ),
       body: body
     }
 

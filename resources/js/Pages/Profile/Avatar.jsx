@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { useForm, usePage } from '@inertiajs/inertia-react'
-import Button from '@/Components/Button'
+import PrimaryButton from '@/Components/PrimaryButton'
 import Alert from '@/Components/Alert'
 
 
@@ -9,7 +9,7 @@ export default function Avatar({ info }) {
   const inputAvatar = useRef(null)
   const [alert, SetAlert] = useState({message: '', type: 'success'})
 
-  const { data, setData, post, progress, errors } = useForm({
+  const { data, setData, post, progress, errors, processing } = useForm({
     avatar: null,
   })
 
@@ -67,7 +67,9 @@ export default function Avatar({ info }) {
         </label>
       </div>
       {errors.avatar && <span class="mt-2 text-pink-600 text-sm">{errors.avatar}</span>}
-      <div className="mt-5 text-right"><Button label="Update" /></div>
+      <div className="flex items-center justify-end">
+        <PrimaryButton processing={processing}>Update</PrimaryButton>
+      </div>
     </form>
   )
 }

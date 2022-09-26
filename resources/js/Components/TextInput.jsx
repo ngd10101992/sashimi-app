@@ -25,8 +25,11 @@ export default function TextInput({
                 name={name}
                 value={value}
                 className={
-                    `border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm ` +
-                    className
+                    `border-gray-300 focus:border-indigo-300 focus:ring
+                    dark:bg-slate-800 dark:text-white dark:border-gray-600
+                    dark:focus:ring-cyan-500
+                    focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm `
+                    + className
                 }
                 ref={input}
                 autoComplete={autoComplete}
