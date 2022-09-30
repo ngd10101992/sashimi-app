@@ -20,10 +20,10 @@ export const ThemeContext = createContext(themes)
 // auth custom hook
 export const useTheme = () => useContext(ThemeContext)
 
-function ThemeContextProvider({ children }) {
+function ThemeContextProvider({ children }: { children: React.ReactNode }) {
 
   return (
-    <ThemeContext.Provider value={true}>
+    <ThemeContext.Provider value={themes}>
       {children}
     </ThemeContext.Provider>
   )

@@ -1,25 +1,28 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Link } from '@inertiajs/inertia-react'
-import ThemeContextProvider, { useTheme } from '@/Providers/ThemeContextProvider'
-import ApplicationLogo from '@/Components/ApplicationLogo'
-import Notification from '@/Components/icon/Notification'
-import TwoUser from '@/Components/icon/TwoUser'
-import Moon from '@/Components/icon/Moon'
-import Sun from '@/Components/icon/Sun'
-import Dropdown from '@/Components/Dropdown'
-import NavLink from '@/Components/NavLink'
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink'
-import Modal from '@/Components/Modal'
-import Avatar from '@/Pages/Profile/Avatar'
-import Info from '@/Pages/Profile/Info'
-import Password from '@/Pages/Profile/Password'
+import { AuthType } from '../common/type'
+import ThemeContextProvider, { useTheme } from '../Providers/ThemeContextProvider'
+import ApplicationLogo from '../Components/ApplicationLogo'
+import Notification from '../Components/icon/Notification'
+import TwoUser from '../Components/icon/TwoUser'
+import Moon from '../Components/icon/Moon'
+import Sun from '../Components/icon/Sun'
+import Dropdown from '../Components/Dropdown'
+import NavLink from '../Components/NavLink'
+import ResponsiveNavLink from '../Components/ResponsiveNavLink'
+import Modal, { ModalHandle } from '../Components/Modal'
+import Avatar from '../Pages/Profile/Avatar'
+import Info from '../Pages/Profile/Info'
+import Password from '../Pages/Profile/Password'
 
-export default function Authenticated({ auth, children }) {
+declare var route: (string?: string) => any
+
+export default function Authenticated({ auth, children }: {children: React.ReactNode, auth: AuthType}) {
   const { light, dark } = useTheme()
   const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
   const [themeMode, SetThemeMode] = useState(true)
-  const [profileTab, SetprofileTab] = useState('avatar')
-  const modalRef = useRef()
+  const [profileTab, SetprofileTab] = useState<'avatar' | 'info' | 'password' | ''>('')
+  const modalRef = useRef<ModalHandle>(null)
 
   useEffect(() => {
     if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -30,17 +33,20 @@ export default function Authenticated({ auth, children }) {
   }, [])
 
   useEffect(() => {
+    if (!profileTab.length) return
     openModalProfile()
   }, [profileTab])
 
   function openModalProfile() {
-    let body = <Avatar info={auth.user} />
+    if (!modalRef.current) throw Error("divRef is not assigned")
+
+    let body = <Avatar />
     switch (profileTab) {
       case 'info':
-        body = <Info info={auth.user} />
+        body = <Info />
         break;
       case 'password':
-        body = <Password info={auth.user} />
+        body = <Password />
         break;
       default:
         break;
@@ -48,7 +54,7 @@ export default function Authenticated({ auth, children }) {
     const data = {
       header: (
         <>
-          <button className={`h-full dark:text-white inline-flex items-center px-7 ${profileTab === 'avatar' ? 'border-b-2 border-indigo-400 dark:border-cyan-500 ' : ''}text-sm text-gray-900 focus:outline-none focus:border-indigo-700 transition duration-150 ease-in-out`} onClick={() => SetprofileTab('avatar')}>Avatar</button>
+          <button className={`h-full dark:text-white inline-flex items-center px-7 ${profileTab === 'avatar' || profileTab === '' ? 'border-b-2 border-indigo-400 dark:border-cyan-500 ' : ''}text-sm text-gray-900 focus:outline-none focus:border-indigo-700 transition duration-150 ease-in-out`} onClick={() => SetprofileTab('avatar')}>Avatar</button>
           <button className={`h-full dark:text-white inline-flex items-center px-7 ${profileTab === 'info' ? 'border-b-2 border-indigo-400 dark:border-cyan-500 ' : ''}text-sm text-gray-900 focus:outline-none focus:border-indigo-700 transition duration-150 ease-in-out`} onClick={() => SetprofileTab('info')}>Info</button>
           <button className={`h-full dark:text-white inline-flex items-center px-7 ${profileTab === 'password' ? 'border-b-2 border-indigo-400 dark:border-cyan-500 ' : ''}text-sm text-gray-900 focus:outline-none focus:border-indigo-700 transition duration-150 ease-in-out`} onClick={() => SetprofileTab('password')}>Password</button>
         </>

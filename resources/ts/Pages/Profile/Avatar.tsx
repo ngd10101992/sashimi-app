@@ -1,11 +1,17 @@
 import { useEffect, useRef, useState } from "react"
 import { useForm, usePage } from '@inertiajs/inertia-react'
-import PrimaryButton from '@/Components/PrimaryButton'
-import Alert from '@/Components/Alert'
+import { InteriaPageType } from '../../common/type'
+import PrimaryButton from '../../Components/PrimaryButton'
+import Alert from '../../Components/Alert'
+
+declare var route: (string?: string) => any
 
 
-export default function Avatar({ info }) {
-  const [avatarSrc, SetAvatarSrc] = useState(info.avatar)
+
+export default function Avatar() {
+  const { auth } = usePage<InteriaPageType>().props
+
+  const [avatarSrc, SetAvatarSrc] = useState(auth.user.avatar)
   const inputAvatar = useRef(null)
   const [alert, SetAlert] = useState({message: '', type: 'success'})
 
@@ -17,26 +23,28 @@ export default function Avatar({ info }) {
     console.log(errors);
   }, [])
 
-  function handlechangeAvatar(event) {
+  function handlechangeAvatar(event: React.ChangeEvent<HTMLInputElement>): void {
+    const file: any = event.target.files![0]
     const reader = new FileReader
-    setData('avatar', event.target.files[0])
-    reader.readAsDataURL(event.target.files[0])
-    reader.onload = e => SetAvatarSrc(e.target.result)
+    setData('avatar', file)
+    reader.readAsDataURL(file)
+    reader.onload = (e: any) => SetAvatarSrc(e.target.result)
   }
 
-  function handleSubmitAvatar(e) {
+  function handleSubmitAvatar(e: React.SyntheticEvent) {
     e.preventDefault()
     post(route('avatar'), {
       preserveScroll: true,
       onSuccess: ({props}) => {
-        if (props.flash.success) {
+        const { success, error }: any = props.flash
+        if (success) {
           SetAlert({
-            message: props.flash.success.message,
+            message: success.message,
             type: 'success'
           })
         } else {
           SetAlert({
-            message: props.flash.error.message,
+            message: error.message,
             type: 'error'
           })
         }
@@ -66,7 +74,7 @@ export default function Avatar({ info }) {
           />
         </label>
       </div>
-      {errors.avatar && <span class="mt-2 text-pink-600 text-sm">{errors.avatar}</span>}
+      {errors.avatar && <span className="mt-2 text-pink-600 text-sm">{errors.avatar}</span>}
       <div className="flex items-center justify-end">
         <PrimaryButton processing={processing}>Update</PrimaryButton>
       </div>

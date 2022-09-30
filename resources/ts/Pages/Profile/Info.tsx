@@ -1,20 +1,24 @@
-import { useForm } from '@inertiajs/inertia-react'
-import InputError from '@/Components/InputError'
-import InputLabel from '@/Components/InputLabel'
-import PrimaryButton from '@/Components/PrimaryButton'
-import TextInput from '@/Components/TextInput'
+import { useForm, usePage } from '@inertiajs/inertia-react'
+import { InteriaPageType } from '../../common/type'
+import InputError from '../../Components/InputError'
+import InputLabel from '../../Components/InputLabel'
+import PrimaryButton from '../../Components/PrimaryButton'
+import TextInput from '../../Components/TextInput'
 
-export default function Info({ info }) {
+declare var route: (string?: string) => any
+
+export default function Info() {
+  const { auth } = usePage<InteriaPageType>().props
   const { data, setData, post, processing, errors, reset } = useForm({
-    email: info.email,
-    name: info.name,
+    email: auth.user.email,
+    name: auth.user.name,
   })
 
-  const onHandleChange = (event) => {
-    setData(event.target.name, event.target.value);
+  const onHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setData(event.target.name as any, event.target.value);
   }
 
-  const submit = (e) => {
+  const submit = (e: React.SyntheticEvent) => {
     e.preventDefault();
     post(route('login'));
   };
@@ -26,7 +30,7 @@ export default function Info({ info }) {
         <TextInput
           type="text"
           name="name"
-          value={info.name}
+          value={auth.user.name}
           className="mt-1 block w-full"
           autoComplete="username"
           isFocused={true}
@@ -39,7 +43,7 @@ export default function Info({ info }) {
         <TextInput
           type="text"
           name="email"
-          value={info.email}
+          value={auth.user.email}
           className="mt-1 block w-full"
           autoComplete="username"
           isFocused={true}

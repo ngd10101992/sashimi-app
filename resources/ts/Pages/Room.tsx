@@ -1,17 +1,18 @@
 import { useEffect } from 'react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
-import Search from '@/Components/icon/Search'
-import colors from 'tailwindcss/colors'
 import { Head } from '@inertiajs/inertia-react'
-import { useTheme } from '@/Providers/ThemeContextProvider'
+import colors from 'tailwindcss/colors'
+import { AuthType } from '../common/type'
+import { useTheme } from '../Providers/ThemeContextProvider'
+import AuthenticatedLayout from '../Layouts/AuthenticatedLayout'
+import Search from '../Components/icon/Search'
 
-export default function Room(props) {
+export default function Room(props: { auth: AuthType, errors: object}) {
   const { light, dark } = useTheme()
 
   useEffect(() => {
-    let box = document.querySelector('.custom-scroll')
-    let content = document.querySelector('.custom-scroll-content')
-    let scrollBar = document.querySelector('.scroll-bar')
+    let box = document.querySelector('.custom-scroll') as HTMLDivElement
+    let content = document.querySelector('.custom-scroll-content') as HTMLElement
+    let scrollBar = document.querySelector('.scroll-bar') as HTMLDivElement
     let boxHeight = box.offsetHeight
     let contentHeight = content.offsetHeight
     let scrollBarHeight = (boxHeight/contentHeight) * 100
@@ -22,13 +23,13 @@ export default function Room(props) {
     let percentBar = (scrollBarHeight/boxHeight) * 100
 
     box.addEventListener('scroll', function() {
-        let top = (box.scrollTop/100) * percentBar
-        scrollBar.style.top = top + 'px'
+      let top = (box.scrollTop/100) * percentBar
+      scrollBar.style.top = top + 'px'
     })
   }, [])
 
   return (
-    <AuthenticatedLayout auth={props.auth} errors={props.errors}>
+    <AuthenticatedLayout auth={props.auth}>
       <Head title="Room" />
       <div className="flex h-screen pt-16 pb-8">
         <div className={`${light.borderClass} ${dark.borderClass} w-80 h-full border-r p-4 relative`}>

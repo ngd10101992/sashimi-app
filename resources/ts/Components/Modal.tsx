@@ -1,12 +1,27 @@
 import { useRef, useState, forwardRef, useImperativeHandle } from "react"
 
-function Modal(props, ref) {
-  const { width = 'w-1/3' } = props
+interface Props {
+  width?: string
+}
+
+interface OpenProps {
+  header: React.ReactNode
+  body: React.ReactNode
+  footer?: React.ReactNode
+}
+
+export type ModalHandle = {
+  open: (props: OpenProps) => void
+}
+
+
+const Modal = forwardRef<ModalHandle, Props>((props, ref) => {
+  const { width } = props
   const [open, SetOpen] = useState(false)
-  const [header, SetHeader] = useState(null)
-  const [body, SetBody] = useState(null)
-  const [footer, SetFooter] = useState(null)
-  const modalRef = useRef()
+  const [header, SetHeader] = useState<React.ReactNode>(null)
+  const [body, SetBody] = useState<React.ReactNode>(null)
+  const [footer, SetFooter] = useState<React.ReactNode>(null)
+  const modalRef = useRef<HTMLDivElement>(null)
 
   useImperativeHandle(ref, () => ({
     open: ({header = null, body = null, footer = null}) => {
@@ -37,6 +52,10 @@ function Modal(props, ref) {
       </div>}
     </>
   )
+})
+
+Modal.defaultProps = {
+  width: 'w-1/3'
 }
 
-export default forwardRef(Modal)
+export default Modal
