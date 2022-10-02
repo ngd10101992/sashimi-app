@@ -18,5 +18,6 @@ export default function InputLabel({ forInput, value, className = '' }: Props) {
 }
 
 InputLabel.defaultProps = {
+  forInput: '',
   className: ''
 }

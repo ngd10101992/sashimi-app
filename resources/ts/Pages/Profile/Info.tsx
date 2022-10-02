@@ -40,7 +40,7 @@ export default function Info() {
         }
       }
     })
-  };
+  }
 
   return (
     <form onSubmit={submit}>

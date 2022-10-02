@@ -21,16 +21,14 @@ export default function TextInput({
   required,
   isFocused,
   disabled,
-  handleChange,
+  handleChange
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!inputRef.current) throw Error("divRef is not assigned");
-    if (isFocused) {
-      inputRef.current.focus();
-    }
-  }, []);
+    if (isFocused) inputRef.current.focus()
+  }, [])
 
   return (
     <div className="flex flex-col items-start">
@@ -60,5 +58,7 @@ export default function TextInput({
 TextInput.defaultProps = {
   required: false,
   disabled: false,
-  isFocused: false
+  isFocused: false,
+  autoComplete: "",
+  name: ""
 }
