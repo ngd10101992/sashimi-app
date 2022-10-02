@@ -26,6 +26,7 @@ Route::get('/', function () {
 });
 
 Route::post('/avatar', [UserController::class, 'avatar'])->name('avatar');
+Route::post('/info', [UserController::class, 'info'])->name('info');
 
 Route::get('/room', function () {
     return Inertia::render('Room');

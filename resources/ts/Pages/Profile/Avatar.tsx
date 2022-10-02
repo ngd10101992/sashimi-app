@@ -10,18 +10,13 @@ declare var route: (string?: string) => any
 
 export default function Avatar() {
   const { auth } = usePage<InteriaPageType>().props
-
   const [avatarSrc, SetAvatarSrc] = useState(auth.user.avatar)
-  const inputAvatar = useRef(null)
   const [alert, SetAlert] = useState({message: '', type: 'success'})
+  const inputAvatar = useRef(null)
 
   const { data, setData, post, progress, errors, processing } = useForm({
     avatar: null,
   })
-
-  useEffect(() => {
-    console.log(errors);
-  }, [])
 
   function handlechangeAvatar(event: React.ChangeEvent<HTMLInputElement>): void {
     const file: any = event.target.files![0]

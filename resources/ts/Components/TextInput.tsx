@@ -8,6 +8,7 @@ interface Props {
   autoComplete: string
   required: boolean
   isFocused: boolean
+  disabled: boolean
   handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
@@ -19,6 +20,7 @@ export default function TextInput({
   autoComplete,
   required,
   isFocused,
+  disabled,
   handleChange,
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -38,8 +40,10 @@ export default function TextInput({
         value={value}
         className={
           `border-gray-300 focus:border-indigo-300 focus:ring
-          dark:bg-slate-800 dark:text-white dark:border-gray-600
+          dark:bg-slate-900 dark:text-white dark:border-gray-600
           dark:focus:ring-cyan-500
+          disabled:bg-gray-100 disabled:text-gray-400
+          dark:disabled:bg-slate-800 dark:disabled:text-gray-400
           focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm `
           + className
         }
@@ -47,6 +51,7 @@ export default function TextInput({
         autoComplete={autoComplete}
         required={required}
         onChange={e => handleChange(e)}
+        disabled={disabled}
       />
     </div>
   )
@@ -54,5 +59,6 @@ export default function TextInput({
 
 TextInput.defaultProps = {
   required: false,
+  disabled: false,
   isFocused: false
 }
