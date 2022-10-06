@@ -25,9 +25,12 @@ Route::get('/', function () {
     ]);
 });
 
+Route::get('/users', [UserController::class, 'index'])->name('users');
+
 Route::post('/avatar', [UserController::class, 'avatar'])->name('avatar');
 Route::post('/info', [UserController::class, 'info'])->name('info');
 Route::post('/password', [UserController::class, 'password'])->name('password');
+
 
 Route::get('/room', function () {
     return Inertia::render('Room');

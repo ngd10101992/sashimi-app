@@ -8,12 +8,33 @@ use App\Http\Requests\UserUpdateInfoRequest;
 use App\Http\Requests\UserUpdatePasswordRequest;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
+use DB;
 use Exception;
 use Auth;
 use Log;
 
 class UserController extends Controller
 {
+    /**
+     * Get list users
+     *
+     * @param  \Illuminate\Http\Request $request
+    */
+    public function index(Request $request)
+    {
+        try {
+            $users = DB::table('users');
+            if (strlen($request->search)) {
+                $users->where('name', 'like', '%'.$request->search.'%')
+                    ->orWhere('email', 'like', '%'.$request->search.'%');
+            }
+
+            return $users->limit($request->limit)->offset($request->offset)->get();
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return redirect()->back()->with('error', ['message' => trans('messages.update.fail')]);
+        }
+    }
     /**
      * Handle update avatar
      *

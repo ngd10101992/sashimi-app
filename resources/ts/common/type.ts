@@ -27,6 +27,7 @@ export interface FlashType {
 export interface UserType {
   name: string
   email: string
+  avatar: string
 }
 
 export interface AuthType {

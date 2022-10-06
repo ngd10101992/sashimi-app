@@ -38,7 +38,7 @@ export default function Room(props: { auth: AuthType, errors: object}) {
             <span className="absolute inset-y-0 left-0 flex items-center pl-2">
               <Search color={colors.slate[400]} />
             </span>
-            <input className="placeholder:italic placeholder:text-slate-400 block bg-white w-full border dark:bg-gray-900 border-gray-100 dark:border-gray-800 rounded-md py-2 pl-10 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm" placeholder="Search for my friend..." type="text" name="search" />
+            <input className="placeholder:italic placeholder:text-slate-400 bg-white w-full border dark:bg-gray-900 border-gray-100 dark:border-gray-800 rounded-md py-2 pl-10 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm" placeholder="Search for my friend..." type="text" name="search" />
           </label>
           <div className="scroll w-2 h-5/6 absolute bg-transparent right-1">
             <div className="scroll-bar w-full bg-gray-300 dark:bg-gray-800 absolute top-0 rounded-lg" />

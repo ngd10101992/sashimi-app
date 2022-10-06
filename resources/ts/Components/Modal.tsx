@@ -39,11 +39,11 @@ const Modal = forwardRef<ModalHandle, Props>((props, ref) => {
 
   return (
     <>
-      {open && <div ref={modalRef} className="flex items-center justify-center animate-fade backdrop-blur-sm bg-slate-900/20 w-screen h-screen fixed top-0 left-0" style={{zIndex: 999}}>
+      {open && <div ref={modalRef} className="flex items-center justify-center animate-fade backdrop-blur-sm bg-slate-900/20 w-screen h-screen fixed top-0 left-0 py-10" style={{zIndex: 999}}>
         <div className="absolute top-0 left-0 w-full h-full" onClick={close} />
         <div className={`${width} bg-white dark:bg-slate-800 rounded-md drop-shadow-2xl`}>
           <header className="flex items-center justify-between w-full h-16 border-b border-slate-200 dark:border-slate-700">
-            <div className="h-full">{header}</div>
+            <div className="h-full flex-1">{header}</div>
             <button className="w-9 h-7 mr-4 rounded-md bg-gray-100 dark:bg-slate-700 text-xs dark:text-slate-400" onClick={() => SetOpen(false)}>ESC</button>
           </header>
           <div className="h-full p-4">{body}</div>

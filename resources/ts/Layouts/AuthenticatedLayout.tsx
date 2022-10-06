@@ -14,6 +14,7 @@ import Modal, { ModalHandle } from '../Components/Modal'
 import Avatar from '../Pages/Profile/Avatar'
 import Info from '../Pages/Profile/Info'
 import Password from '../Pages/Profile/Password'
+import Users from '../Pages/Users'
 
 declare var route: (string?: string) => any
 
@@ -86,31 +87,32 @@ export default function Authenticated({ auth, children }: {children: React.React
                 </div>
 
                 <div className="hidden sm:flex sm:items-center sm:ml-6">
-                  <div className="ml-3"><TwoUser color={themeMode ? light.textColor : dark.textColor} /></div>
-                  <div className="ml-3"><Notification color={themeMode ? light.textColor : dark.textColor} /></div>
-                  <div className="ml-3 relative">
-                    <div className={` ${light.borderClass} ${dark.borderClass} border-l ml-6 pl-6`}>
+                  <Users modalRef={modalRef} />
+                  <div className="mr-4"><TwoUser color={themeMode ? light.textColor : dark.textColor} /></div>
+                  <div className="mr-2"><Notification color={themeMode ? light.textColor : dark.textColor} /></div>
+                  <div className="mr-2 relative">
+                    <div className={` ${light.borderClass} ${dark.borderClass} border-l ml-3 pl-3`}>
                       <button onClick={() => SetThemeMode(!themeMode)} className="inline-flex items-center p-2 font-medium focus:outline-none transition ease-in-out duration-150">
                         {themeMode ? <Sun /> : <Moon color="white" />}
                       </button>
-                      </div>
                     </div>
-                  <div className="ml-3 relative">
-                  <Dropdown>
-                    <Dropdown.Trigger>
-                    <button type="button" className="inline-flex items-center p-2 text-sm leading-4 font-medium text-gray-500 dark:text-white focus:outline-none transition ease-in-out duration-150">
-                      {auth.user.name}
-                      <svg className="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                      </svg>
-                    </button>
-                    </Dropdown.Trigger>
+                  </div>
+                  <div className="relative">
+                    <Dropdown>
+                      <Dropdown.Trigger>
+                      <button type="button" className="inline-flex items-center p-2 text-sm leading-4 font-medium text-gray-500 dark:text-white focus:outline-none transition ease-in-out duration-150">
+                        {auth.user.name}
+                        <svg className="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                        </svg>
+                      </button>
+                      </Dropdown.Trigger>
 
-                    <Dropdown.Content>
-                      <button onClick={openModalProfile} className="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">Profile</button>
-                      <Dropdown.Link href={route('logout')} method="post" as="button">Logout</Dropdown.Link>
-                    </Dropdown.Content>
-                  </Dropdown>
+                      <Dropdown.Content>
+                        <button onClick={openModalProfile} className="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">Profile</button>
+                        <Dropdown.Link href={route('logout')} method="post" as="button">Logout</Dropdown.Link>
+                      </Dropdown.Content>
+                    </Dropdown>
                   </div>
                 </div>
 
