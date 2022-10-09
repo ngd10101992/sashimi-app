@@ -8,7 +8,7 @@ import PrimaryButton from '../Components/PrimaryButton'
 declare var route: (string?: string) => any
 
 export default function Users({modalRef}: {modalRef: any}) {
-  const [users, setUsers] = useState<null | UserType[]>(null)
+  const [users, setUsers] = useState<[] | UserType[]>([])
   const [data, setData] = useState({
     search: '',
     limit: 10,
@@ -16,47 +16,27 @@ export default function Users({modalRef}: {modalRef: any}) {
   })
 
   useEffect(() => {
+    if (!data.search.length) return
     const timeOut = setTimeout(() => {
       axios.get(route('users') + `?search=${data.search}&limit=${data.limit}&offset=${data.offset}`)
-      .then((response) => {
-        setUsers(response.data)
-      })
-      .catch((error) => {
-        console.log(error)
-      })
+      .then(response => setUsers(prev => [...prev, ...response.data]))
+      .catch(error => console.log(error))
     }, 1000)
 
     return () => clearTimeout(timeOut)
   }, [data])
 
   useEffect(() => {
+    if (!data.search.length) return
     openModalUsers()
-  }, [users])
-
-  useEffect(() => {
-    let box = document.querySelector('.custom-scroll') as HTMLDivElement
-    let content = document.querySelector('.custom-scroll-content') as HTMLElement
-    let scrollBar = document.querySelector('.scroll-bar') as HTMLDivElement
-    let boxHeight = box.offsetHeight
-    let contentHeight = content.offsetHeight
-    let scrollBarHeight = (boxHeight/contentHeight) * 100
-
-    scrollBar.style.height = scrollBarHeight + "%"
-    scrollBarHeight = scrollBar.offsetHeight
-
-    let percentBar = (scrollBarHeight/boxHeight) * 100
-
-    box.addEventListener('scroll', function() {
-      let top = (box.scrollTop/100) * percentBar
-      scrollBar.style.top = top + 'px'
-    })
-  }, [users])
+  }, [users.length])
 
   function handleChangeSearch(event: React.ChangeEvent<HTMLInputElement>) {
-    setData((prev) => {
-      return {...prev, search: event.target.value};
+    setData(prev => {
+      return {...prev, search: event.target.value}
     })
   }
+
   function openModalUsers() {
     if (!modalRef.current) throw Error("divRef is not assigned")
 
@@ -81,12 +61,9 @@ export default function Users({modalRef}: {modalRef: any}) {
         </div>
       ),
       body: (
-        <div className="h-5/6 relative pr-5">
-          <div className="scroll w-2 h-full absolute bg-transparent -right-1">
-            <div className="scroll-bar w-full bg-gray-300 dark:bg-gray-700 absolute top-0 rounded-lg" />
-          </div>
-          <div className="custom-scroll relative overflow-auto" style={{height: '400px'}}>
-            <ul className=" custom-scroll-content">
+        <div className="">
+          <div className="custom-scroll overflow-auto max-h-full">
+            <ul className="custom-scroll-content">
               { users &&
                 users.map((user, index) => (
                   <li className="flex py-4 first:pt-0 last:pb-0" key={index}>

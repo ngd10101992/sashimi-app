@@ -23,13 +23,13 @@ class UserController extends Controller
     public function index(Request $request)
     {
         try {
-            $users = DB::table('users');
+            $users = DB::table('users')->limit($request->limit)->offset($request->offset);
             if (strlen($request->search)) {
                 $users->where('name', 'like', '%'.$request->search.'%')
                     ->orWhere('email', 'like', '%'.$request->search.'%');
             }
 
-            return $users->limit($request->limit)->offset($request->offset)->get();
+            return $users->get();
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             return redirect()->back()->with('error', ['message' => trans('messages.update.fail')]);
