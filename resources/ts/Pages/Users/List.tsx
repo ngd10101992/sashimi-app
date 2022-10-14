@@ -1,35 +1,40 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import colors from 'tailwindcss/colors'
-import { UserType } from '../common/type'
-import Search from '../Components/icon/Search'
-import PrimaryButton from '../Components/PrimaryButton'
+import { UserType, ContactCodeType } from '../../common/type'
+import Search from '../../Components/icon/Search'
+import User from './User'
 
 declare var route: (string?: string) => any
 
-export default function Users({modalRef}: {modalRef: any}) {
+export default function List({modalRef}: {modalRef: any}) {
   const [users, setUsers] = useState<[] | UserType[]>([])
+  const [contactCodes, setContactCodes] = useState<ContactCodeType | null>(null)
   const [data, setData] = useState({
     search: '',
     limit: 10,
     offset: 0
   })
+  const [refreshUsers, setRefreshUsers] = useState(false)
 
   useEffect(() => {
     if (!data.search.length) return
     const timeOut = setTimeout(() => {
       axios.get(route('users') + `?search=${data.search}&limit=${data.limit}&offset=${data.offset}`)
-      .then(response => setUsers(prev => [...prev, ...response.data]))
+      .then(response => {
+        setUsers(prev => [...prev, ...response.data.users])
+        setContactCodes(response.data.contactCodes)
+      })
       .catch(error => console.log(error))
     }, 1000)
 
     return () => clearTimeout(timeOut)
-  }, [data])
+  }, [data, refreshUsers])
 
   useEffect(() => {
     if (!data.search.length) return
     openModalUsers()
-  }, [users.length])
+  }, [users.length, contactCodes])
 
   function handleChangeSearch(event: React.ChangeEvent<HTMLInputElement>) {
     setData(prev => {
@@ -62,22 +67,9 @@ export default function Users({modalRef}: {modalRef: any}) {
       ),
       body: (
         <div className="">
-          <div className="custom-scroll overflow-auto max-h-full">
+          <div className="custom-scroll overflow-auto" style={{maxHeight: '80vh'}}>
             <ul className="custom-scroll-content">
-              { users &&
-                users.map((user, index) => (
-                  <li className="flex py-4 first:pt-0 last:pb-0" key={index}>
-                    <img className="h-10 w-10 rounded-full" src={user.avatar} alt={user.name} />
-                    <div className="ml-3 overflow-hidden">
-                      <p className="text-sm font-medium text-slate-900 dark:text-white">{user.name}</p>
-                      <p className="text-sm text-slate-500 truncate">{user.email}</p>
-                    </div>
-                    <div className='flex flex-1 justify-end'>
-                      <PrimaryButton processing={null}>Add</PrimaryButton>
-                    </div>
-                  </li>
-                ))
-              }
+              {users && users.map(user => <User user={user} contactCodes={contactCodes } key={user.id}/>)}
             </ul>
           </div>
         </div>

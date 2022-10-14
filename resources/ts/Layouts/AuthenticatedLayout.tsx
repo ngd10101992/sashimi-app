@@ -14,7 +14,7 @@ import Modal, { ModalHandle } from '../Components/Modal'
 import Avatar from '../Pages/Profile/Avatar'
 import Info from '../Pages/Profile/Info'
 import Password from '../Pages/Profile/Password'
-import Users from '../Pages/Users'
+import List from '../Pages/Users/List'
 
 declare var route: (string?: string) => any
 
@@ -87,7 +87,7 @@ export default function Authenticated({ auth, children }: {children: React.React
                 </div>
 
                 <div className="hidden sm:flex sm:items-center sm:ml-6">
-                  <Users modalRef={modalRef} />
+                  <List modalRef={modalRef} />
                   <div className="mr-4"><TwoUser color={themeMode ? light.textColor : dark.textColor} /></div>
                   <div className="mr-2"><Notification color={themeMode ? light.textColor : dark.textColor} /></div>
                   <div className="mr-2 relative">

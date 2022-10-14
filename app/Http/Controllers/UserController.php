@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Requests\UploadFileRequest;
 use App\Http\Requests\UserUpdateInfoRequest;
 use App\Http\Requests\UserUpdatePasswordRequest;
+use App\Models\User;
+use App\Models\Contact;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
 use DB;
@@ -23,18 +25,51 @@ class UserController extends Controller
     public function index(Request $request)
     {
         try {
-            $users = DB::table('users')->limit($request->limit)->offset($request->offset);
+            $auth = Auth::user();
+            $users = User::limit($request->limit)
+                        ->offset($request->offset)
+                        ->where('id', '!=', $auth->id);
+
             if (strlen($request->search)) {
-                $users->where('name', 'like', '%'.$request->search.'%')
-                    ->orWhere('email', 'like', '%'.$request->search.'%');
+                $users->where(function ($query) use ($request) {
+                    $query->where('name', 'like', '%'.$request->search.'%')
+                        ->orWhere('email', 'like', '%'.$request->search.'%');
+                });
             }
 
-            return $users->get();
+            $users = $users->get();
+
+            foreach ($users as $user) {
+                $pending =  Contact::select('confirmed')
+                                    ->where('user_id', $auth->id)
+                                    ->where('target_id', $user->id)
+                                    ->first();
+                $confirm =  Contact::select('confirmed')
+                                    ->where('target_id', $auth->id)
+                                    ->where('user_id', $user->id)
+                                    ->first();
+                $isFriend = CONTACT_CODES['notRelation'];
+                if ((!empty($pending) && $pending->confirmed) || (!empty($confirm) && $confirm->confirmed)) {
+                    $isFriend = CONTACT_CODES['isFriend'];
+                } elseif ((!empty($pending) && $pending->confirmed === 0)) {
+                    $isFriend = CONTACT_CODES['pending'];
+                } elseif ((!empty($confirm) && $confirm->confirmed === 0)) {
+                    $isFriend = CONTACT_CODES['confirm'];
+                }
+
+                $user['isFriend'] = $isFriend;
+            }
+
+            return [
+                'users' => $users,
+                'contactCodes' => CONTACT_CODES
+            ];
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             return redirect()->back()->with('error', ['message' => trans('messages.update.fail')]);
         }
     }
+
     /**
      * Handle update avatar
      *

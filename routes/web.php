@@ -4,6 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ContactController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,10 +27,13 @@ Route::get('/', function () {
 });
 
 Route::get('/users', [UserController::class, 'index'])->name('users');
-
+// User
 Route::post('/avatar', [UserController::class, 'avatar'])->name('avatar');
 Route::post('/info', [UserController::class, 'info'])->name('info');
 Route::post('/password', [UserController::class, 'password'])->name('password');
+
+//Contact
+Route::post('/add-friend', [ContactController::class, 'add'])->name('add-friend');
 
 
 Route::get('/room', function () {

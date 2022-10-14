@@ -25,9 +25,17 @@ export interface FlashType {
 }
 
 export interface UserType {
+  id: string
   name: string
   email: string
   avatar: string
+  isFriend: number
+}
+export interface ContactCodeType {
+  notRelation: number
+  isFriend: number
+  pending: number
+  confirm: number
 }
 
 export interface AuthType {
