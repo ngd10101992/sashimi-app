@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Link } from '@inertiajs/inertia-react'
-import { AuthType } from '../common/type'
+import { Link, useForm } from '@inertiajs/inertia-react'
+import { AuthType, UserType } from '../common/type'
 import ThemeContextProvider, { useTheme } from '../Providers/ThemeContextProvider'
 import ApplicationLogo from '../Components/ApplicationLogo'
 import Notification from '../Components/icon/Notification'
@@ -15,21 +15,42 @@ import Avatar from '../Pages/Profile/Avatar'
 import Info from '../Pages/Profile/Info'
 import Password from '../Pages/Profile/Password'
 import List from '../Pages/Users/List'
+import UserAdd, { AddUser } from '../Components/UserAdd'
 
 declare var route: (string?: string) => any
+declare var Pusher: any
 
-export default function Authenticated({ auth, children }: {children: React.ReactNode, auth: AuthType}) {
+export default function Authenticated({ auth, addList, children }: {children: React.ReactNode, addList:[], auth: AuthType}) {
   const { light, dark } = useTheme()
-  const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
-  const [themeMode, SetThemeMode] = useState(true)
+  const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false)
+  const [themeMode, setThemeMode] = useState(true)
   const [profileTab, SetprofileTab] = useState<'avatar' | 'info' | 'password' | ''>('')
   const modalRef = useRef<ModalHandle>(null)
+  const [badge, setBadge] = useState<number>(0)
+  const [adds, setAdds] = useState<AddUser[]>(addList)
+
+  useEffect(() => {
+    const pusher = new Pusher('2d240a8e1585e1883a5e', {
+      cluster: 'ap3',
+      authEndpoint: '/broadcasting/auth'
+    })
+
+    const channel = pusher.subscribe('private-user.' + auth.user.id)
+    channel.bind('AddFriendPusherEvent', function({ userAdd }: {userAdd: AddUser}) {
+      setAdds(prev => {
+        const newPrev = [...prev]
+        newPrev.unshift(userAdd)
+        return newPrev
+      })
+      setBadge(prev => prev + 1)
+    })
+  }, [])
 
   useEffect(() => {
     if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      SetThemeMode(false)
+      setThemeMode(false)
     } else {
-      SetThemeMode(true)
+      setThemeMode(true)
     }
   }, [])
 
@@ -88,11 +109,30 @@ export default function Authenticated({ auth, children }: {children: React.React
 
                 <div className="hidden sm:flex sm:items-center sm:ml-6">
                   <List modalRef={modalRef} />
-                  <div className="mr-4"><TwoUser color={themeMode ? light.textColor : dark.textColor} /></div>
+                  <div className="relative mr-4">
+                    <Dropdown>
+                      <Dropdown.Trigger>
+                        <button type="button" className="inline-flex items-center p-2 text-sm leading-4 font-medium text-gray-500 dark:text-white focus:outline-none transition ease-in-out duration-150">
+                          { badge > 0 &&
+                            <span className="absolute bg-red-700 bottom-4 left-4 font-bold rounded-full flex justify-center items-center text-white text-xs"
+                              style={{width: '20px', height: '20px'}}
+                            >
+                              {badge}
+                            </span>
+                          }
+                          <TwoUser color={themeMode ? light.textColor : dark.textColor} />
+                        </button>
+                      </Dropdown.Trigger>
+
+                      <Dropdown.Content width="150">
+                        {adds.length ? adds.map((userAdd) => <UserAdd info={userAdd} key={userAdd.id} />) : 'No content'}
+                      </Dropdown.Content>
+                    </Dropdown>
+                  </div>
                   <div className="mr-2"><Notification color={themeMode ? light.textColor : dark.textColor} /></div>
-                  <div className="mr-2 relative">
+                  <div className="relative mr-2">
                     <div className={` ${light.borderClass} ${dark.borderClass} border-l ml-3 pl-3`}>
-                      <button onClick={() => SetThemeMode(!themeMode)} className="inline-flex items-center p-2 font-medium focus:outline-none transition ease-in-out duration-150">
+                      <button onClick={() => setThemeMode(!themeMode)} className="inline-flex items-center p-2 font-medium focus:outline-none transition ease-in-out duration-150">
                         {themeMode ? <Sun /> : <Moon color="white" />}
                       </button>
                     </div>

@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ContactController;
+use App\Models\Contact;
+use App\Models\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,10 +36,21 @@ Route::post('/password', [UserController::class, 'password'])->name('password');
 
 //Contact
 Route::post('/add-friend', [ContactController::class, 'add'])->name('add-friend');
+Route::post('/add-friend-refuse', [ContactController::class, 'refuse'])->name('add-friend-refuse');
+Route::post('/add-friend-confirm', [ContactController::class, 'confirm'])->name('add-friend-confirm');
 
 
 Route::get('/room', function () {
-    return Inertia::render('Room');
+    $user = Auth::user();
+
+    $addList = Contact::select('user_id')
+                        ->where('target_id', $user->id)
+                        ->where('confirmed', 0)
+                        ->join('users', 'users.id', '=', 'contacts.user_id')
+                        ->select('users.*', 'contacts.id as contact_id')
+                        ->get();
+
+    return Inertia::render('Room', ['addList' => $addList]);
 })->middleware(['auth', 'verified'])->name('room');
 
 require __DIR__.'/auth.php';

@@ -69,7 +69,7 @@ export default function List({modalRef}: {modalRef: any}) {
         <div className="">
           <div className="custom-scroll overflow-auto" style={{maxHeight: '80vh'}}>
             <ul className="custom-scroll-content">
-              {users && users.map(user => <User user={user} contactCodes={contactCodes } key={user.id}/>)}
+              {users && users.map(user => <User user={user} contactCodes={contactCodes} key={user.id} />)}
             </ul>
           </div>
         </div>
@@ -78,7 +78,7 @@ export default function List({modalRef}: {modalRef: any}) {
   }
 
   return (
-    <div className='mr-6'>
+    <div className="flex items-center mr-6">
       <label className="relative">
         <span className="sr-only">Search</span>
         <span className="absolute inset-y-0 left-0 flex items-center pl-2">

@@ -6,7 +6,7 @@ import { useTheme } from '../Providers/ThemeContextProvider'
 import AuthenticatedLayout from '../Layouts/AuthenticatedLayout'
 import Search from '../Components/icon/Search'
 
-export default function Room(props: { auth: AuthType, errors: object}) {
+export default function Room(props: { auth: AuthType, addList: [], errors: object}) {
   const { light, dark } = useTheme()
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export default function Room(props: { auth: AuthType, errors: object}) {
   }, [])
 
   return (
-    <AuthenticatedLayout auth={props.auth}>
+    <AuthenticatedLayout auth={props.auth} addList={props.addList}>
       <Head title="Room" />
       <div className="flex h-screen pt-16 pb-8">
         <div className={`${light.borderClass} ${dark.borderClass} w-80 h-full border-r p-4 relative`}>

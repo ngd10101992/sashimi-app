@@ -11,7 +11,7 @@ declare var route: (string?: string) => any
 
 export default function Info() {
   const { auth } = usePage<InteriaPageType>().props
-  const [alert, SetAlert] = useState({message: '', type: 'success'})
+  const [alert, setAlert] = useState({message: '', type: 'success'})
   const { data, setData, post, processing, errors, reset } = useForm({
     email: auth.user.email,
     name: auth.user.name
@@ -28,12 +28,12 @@ export default function Info() {
       onSuccess: ({props}) => {
         const { success, error }: any = props.flash
         if (success) {
-          SetAlert({
+          setAlert({
             message: success.message,
             type: 'success'
           })
         } else {
-          SetAlert({
+          setAlert({
             message: error.message,
             type: 'error'
           })
