@@ -1,7 +1,9 @@
+import { useState } from 'react'
 import { createContext, useContext } from "react"
 import colors from 'tailwindcss/colors'
 
 const themes = {
+  // themeMode: true,
   light: {
     textColor: colors.slate[900],
     textClass: 'text-slate-900',
@@ -17,6 +19,10 @@ const themes = {
 }
 
 export const ThemeContext = createContext(themes)
+// export const setThemeMode = function(value: boolean) {
+//   themes.themeMode = value
+// }
+
 // auth custom hook
 export const useTheme = () => useContext(ThemeContext)
 
