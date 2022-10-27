@@ -4,12 +4,12 @@ import { UserType } from "../common/type"
 
 declare var route: (string?: string) => any;
 
-export interface AddUser extends UserType {
+export interface AddUserType extends UserType {
   contact_id: number
 }
 
 interface Props {
-  info: AddUser
+  info: AddUserType
 }
 
 export default function AddUser({ info }: Props) {

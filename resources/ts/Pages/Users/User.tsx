@@ -14,11 +14,11 @@ export default function User({ user, contactCodes }: Props) {
     const [userInfo, setUserInfo] = useState<UserType>(user)
     const { data, setData, post, processing, errors, reset } = useForm({
       targetId: user.id,
-    });
+    })
 
     useEffect(() => {
       // console.log(user)
-    }, []);
+    }, [])
 
     const submitAdd = (e: React.SyntheticEvent) => {
       e.preventDefault();
@@ -61,7 +61,7 @@ export default function User({ user, contactCodes }: Props) {
           // }
         },
       });
-    };
+    }
 
     return (
       <li className="flex py-4 first:pt-0 last:pb-0">

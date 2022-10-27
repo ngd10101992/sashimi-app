@@ -16,5 +16,9 @@ return [
     'confirm' => [
         'success' => 'Confirm friend successfully',
         'fail' => 'Confirm friend failed !'
+    ],
+    'send' => [
+        'success' => 'Send message successfully',
+        'fail' => 'Send message failed !'
     ]
 ];

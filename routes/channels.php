@@ -20,3 +20,7 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 Broadcast::channel('user.{id}', function ($user, $id) {
     return true;
 });
+
+Broadcast::channel('presence-video-channel', function ($user) {
+    return ['id' => $user->id, 'name' => $user->name];
+});

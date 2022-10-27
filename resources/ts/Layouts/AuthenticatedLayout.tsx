@@ -15,7 +15,7 @@ import Avatar from '../Pages/Profile/Avatar'
 import Info from '../Pages/Profile/Info'
 import Password from '../Pages/Profile/Password'
 import List from '../Pages/Users/List'
-import UserAdd, { AddUser } from '../Components/UserAdd'
+import UserAdd, { AddUserType } from '../Components/UserAdd'
 
 declare var route: (string?: string) => any
 declare var Pusher: any
@@ -27,7 +27,7 @@ export default function Authenticated({ auth, addList, children }: {children: Re
   const [profileTab, SetprofileTab] = useState<'avatar' | 'info' | 'password' | ''>('')
   const modalRef = useRef<ModalHandle>(null)
   const [badge, setBadge] = useState<number>(0)
-  const [adds, setAdds] = useState<AddUser[]>(addList)
+  const [adds, setAdds] = useState<AddUserType[]>(addList)
 
   useEffect(() => {
     const pusher = new Pusher('2d240a8e1585e1883a5e', {
@@ -36,7 +36,7 @@ export default function Authenticated({ auth, addList, children }: {children: Re
     })
 
     const channel = pusher.subscribe('private-user.' + auth.user.id)
-    channel.bind('AddFriendPusherEvent', function({ userAdd }: {userAdd: AddUser}) {
+    channel.bind('AddFriendPusherEvent', function({ userAdd }: {userAdd: AddUserType}) {
       setAdds(prev => {
         const newPrev = [...prev]
         newPrev.unshift(userAdd)

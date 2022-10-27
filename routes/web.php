@@ -6,6 +6,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\RoomController;
+use App\Http\Controllers\ChatController;
 use App\Models\Contact;
 use App\Models\User;
 
@@ -43,17 +44,8 @@ Route::post('/add-friend-confirm', [ContactController::class, 'confirm'])->name(
 Route::get('/room', [RoomController::class, 'index'])->middleware(['auth', 'verified'])->name('room');
 
 
-// Route::get('/room', function () {
-//     $user = Auth::user();
-
-//     $addList = Contact::select('user_id')
-//                         ->where('target_id', $user->id)
-//                         ->where('confirmed', 0)
-//                         ->join('users', 'users.id', '=', 'contacts.user_id')
-//                         ->select('users.*', 'contacts.id as contact_id')
-//                         ->get();
-
-//     return Inertia::render('Room', ['addList' => $addList]);
-// })->middleware(['auth', 'verified'])->name('room');
+Route::post('/send-message', [ChatController::class, 'sendMessage'])->name('send-message');
+Route::post('/video/call-user', 'App\Http\Controllers\ChatController@callUser');
+Route::post('/video/accept-call', 'App\Http\Controllers\ChatController@acceptCall');
 
 require __DIR__.'/auth.php';

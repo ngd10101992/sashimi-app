@@ -9,6 +9,7 @@ use App\Models\User;
 
 use Exception;
 use Auth;
+use Log;
 
 class RoomController extends Controller
 {
@@ -32,7 +33,13 @@ class RoomController extends Controller
                                 ->where(function ($query) use ($user) {
                                     $query->where('user_id', $user->id)->orWhere('target_id', $user->id);
                                 })
-                                ->join('users', 'users.id', '=', 'contacts.user_id')
+                                ->join('users', function ($join) use ($user) {
+                                    $join->on(function ($on) {
+                                        $on->on('users.id', '=', 'contacts.user_id')
+                                            ->orOn('users.id', '=', 'contacts.target_id');
+                                    })
+                                    ->where('users.id', '!=', $user->id);
+                                })
                                 ->select('users.*')
                                 ->get();
 
