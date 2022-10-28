@@ -52,9 +52,11 @@ class ChatMessagePusherEvent implements ShouldBroadcast
 
     public function broadcastWith()
     {
+        $data = $this->userSend;
+        $data['content'] = $this->message;
+
         return [
-            'userSend' => $this->userSend,
-            'message' => $this->message
+            'userSend' => $data
         ];
     }
 }

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Head, useForm } from '@inertiajs/inertia-react'
+import axios from 'axios'
 import colors from 'tailwindcss/colors'
 import { AuthType, UserType } from '../common/type'
 import { getPermissionsVideo } from '../common/helpers'
@@ -13,9 +14,9 @@ import Happy from '../Components/icon/Happy'
 declare var route: (string?: string) => any
 declare var Pusher: any
 
-interface messagesType {
-  userSend: UserType
-  message: string
+interface messagesType extends UserType{
+  content: string
+  content_created_at: string
 }
 
 export default function Room(props: { auth: AuthType, addList: [], friends: UserType[], errors: object}) {
@@ -25,7 +26,7 @@ export default function Room(props: { auth: AuthType, addList: [], friends: User
   }
   const { auth } = props
   const { light, dark } = useTheme()
-  const { data, setData, post, processing, errors, reset } = useForm(messageFormData);
+  const messageForm = useForm(messageFormData)
   const [hasMedia, setHasMedia] = useState(false)
   const [currentTargetUser, setCurrentTargetUser] = useState<UserType | null>(null)
   const [messages, setMessages] = useState<messagesType[]>([])
@@ -57,8 +58,8 @@ export default function Room(props: { auth: AuthType, addList: [], friends: User
     })
 
     const channel = pusher.subscribe('private-user.' + auth.user.id)
-    channel.bind('ChatMessagePusherEvent', function({ userSend, message }: {userSend: UserType, message: string}) {
-      setMessages((prev: messagesType[]) => [...prev, {userSend: userSend, message: message}])
+    channel.bind('ChatMessagePusherEvent', function({ userSend }: {userSend: messagesType}) {
+      setMessages((prev: messagesType[]) => [userSend, ...prev])
     })
   }, [])
 
@@ -84,26 +85,37 @@ export default function Room(props: { auth: AuthType, addList: [], friends: User
   }
 
   function setTargetUser(targetUser: UserType) {
-    setData('targetId', targetUser.id)
+    messageForm.setData('targetId', targetUser.id)
     setCurrentTargetUser(targetUser)
+
+    axios.post(route('get-messages'), {
+      targetId: targetUser.id
+    })
+    .then(response => {
+      setMessages(response.data)
+    })
+    .catch(error => console.log(error))
   }
 
   const onHandleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setData(event.target.name as any, event.target.value)
+    messageForm.setData(event.target.name as any, event.target.value)
   }
 
   const submitSendMessage = (e: React.SyntheticEvent) => {
     e.preventDefault();
-    post(route("send-message"), {
+    messageForm.post(route("send-message"), {
       preserveScroll: true,
       onSuccess: ({ props }) => {
         const { success, error }: any = props.flash
         if (success) {
-          setMessages((prev: messagesType[]) => [...prev, {userSend: auth!.user, message: success.message}])
+          setMessages((prev: messagesType[]) => {
+            prev.unshift(success.userSend)
+            return prev
+          })
         } else {
           console.log(error);
         }
-        setData('message', '')
+        messageForm.setData('message', '')
       }
     })
   }
@@ -146,16 +158,17 @@ export default function Room(props: { auth: AuthType, addList: [], friends: User
         </div>
         {currentTargetUser &&
           <>
-            <div className="grow h-full">
-              <div className="h-5/6">
+            <div className="grow h-full pb-24 relative">
+              <div className="h-full">
                 <div className={`${light.borderClass} ${dark.borderClass} border-b p-4 flex justify-between items-center`}>
                   <span className="text-2xl font-medium text-slate-700 dark:text-white">{currentTargetUser.name}</span>
                   <div>
                     <span onClick={startVideoCall} className="cursor-pointer"><Video color='white'/></span>
                   </div>
                 </div>
-                <div className="overflow-auto max-h-full custom-scroll">
-                  {!!messages.length && messages.map(({userSend, message}: messagesType, index) => {
+                {/* <div className="overflow-auto custom-scroll flex flex-col-reverse" style={{maxHeight: '85%'}}> */}
+                <div className="overflow-auto custom-scroll flex flex-col-reverse" style={{maxHeight: '90%'}}>
+                  {!!messages.length && messages.map((userSend: messagesType, index) => {
                     return (
                       <div className="py-7 border-t border-gray-100 dark:border-gray-800" key={index}>
                         <div className="px-7">
@@ -163,17 +176,17 @@ export default function Room(props: { auth: AuthType, addList: [], friends: User
                             <img className="w-10 h-10 rounded-md" src={userSend.avatar} alt="avatar" />
                             <div className="flex flex-col justify-between pl-2">
                               <span className="text-white relative bottom-0.5">{userSend.name}</span>
-                              <span className="text-gray-400 text-xs relative top-0.5">09:00 AM</span>
+                              <span className="text-gray-400 text-xs relative top-0.5">{userSend.content_created_at}</span>
                             </div>
                           </div>
-                          <p className="text-white">{message}</p>
+                          <p className="text-white">{userSend.content}</p>
                         </div>
                       </div>
                     )
                   })}
                 </div>
               </div>
-              <div className="px-7 z-10 relative">
+              <div className="px-7 z-10 absolute w-full bottom-0 h-24">
                 <div className="p-1 px-3 bg-white border dark:bg-gray-900 border-gray-100 dark:border-gray-800 rounded-md">
                   <form onSubmit={submitSendMessage}>
                     <input className="placeholder:italic placeholder:text-slate-400
@@ -181,13 +194,13 @@ export default function Room(props: { auth: AuthType, addList: [], friends: User
                       py-2 px-0 shadow-sm focus:outline-none text-white
                     "
                       name="message"
-                      value={data.message}
+                      value={messageForm.data.message}
                       onChange={onHandleChange}
                       placeholder="Enter message..."
                     />
                     <div className="flex justify-between py-2">
                       <button type="submit"><Happy color={colors.slate[400]} /></button>
-                      <button type="submit"><Send color={data.message.length ? colors.cyan[400] : colors.slate[400]} /></button>
+                      <button type="submit"><Send color={messageForm.data.message.length ? colors.cyan[400] : colors.slate[400]} /></button>
                     </div>
                   </form>
                 </div>

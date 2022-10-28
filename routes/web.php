@@ -44,6 +44,7 @@ Route::post('/add-friend-confirm', [ContactController::class, 'confirm'])->name(
 Route::get('/room', [RoomController::class, 'index'])->middleware(['auth', 'verified'])->name('room');
 
 
+Route::post('/get-messages', [ChatController::class, 'getMessages'])->name('get-messages');
 Route::post('/send-message', [ChatController::class, 'sendMessage'])->name('send-message');
 Route::post('/video/call-user', 'App\Http\Controllers\ChatController@callUser');
 Route::post('/video/accept-call', 'App\Http\Controllers\ChatController@acceptCall');

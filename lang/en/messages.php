@@ -20,5 +20,9 @@ return [
     'send' => [
         'success' => 'Send message successfully',
         'fail' => 'Send message failed !'
+    ],
+    'get' => [
+        'success' => 'Get message successfully',
+        'fail' => 'Get message failed !'
     ]
 ];
