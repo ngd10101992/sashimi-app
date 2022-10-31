@@ -6,8 +6,6 @@ import Alert from '../../Components/Alert'
 
 declare var route: (string?: string) => any
 
-
-
 export default function Avatar() {
   const { auth } = usePage<InteriaPageType>().props
   const [avatarSrc, SetAvatarSrc] = useState(auth.user.avatar)

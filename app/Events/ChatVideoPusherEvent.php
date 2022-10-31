@@ -10,7 +10,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class StartVideoChatPusherEvent implements ShouldBroadcast
+class ChatVideoPusherEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -33,6 +33,6 @@ class StartVideoChatPusherEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PresenceChannel('presence-video-channel');
+        return new PresenceChannel('presence-videocall');
     }
 }

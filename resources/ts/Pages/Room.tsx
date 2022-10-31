@@ -1,18 +1,18 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Head, useForm } from '@inertiajs/inertia-react'
 import axios from 'axios'
 import colors from 'tailwindcss/colors'
 import { AuthType, UserType } from '../common/type'
-import { getPermissionsVideo } from '../common/helpers'
+import { pusher } from '../common/helpers'
 import { useTheme } from '../Providers/ThemeContextProvider'
 import AuthenticatedLayout from '../Layouts/AuthenticatedLayout'
 import Search from '../Components/icon/Search'
 import Video from '../Components/icon/Video'
 import Send from '../Components/icon/Send'
 import Happy from '../Components/icon/Happy'
+import VideoCall from './VideoCall'
 
 declare var route: (string?: string) => any
-declare var Pusher: any
 
 interface messagesType extends UserType{
   content: string
@@ -27,62 +27,35 @@ export default function Room(props: { auth: AuthType, addList: [], friends: User
   const { auth } = props
   const { light, dark } = useTheme()
   const messageForm = useForm(messageFormData)
-  const [hasMedia, setHasMedia] = useState(false)
   const [currentTargetUser, setCurrentTargetUser] = useState<UserType | null>(null)
   const [messages, setMessages] = useState<messagesType[]>([])
-  const myVideoRef = useRef<HTMLVideoElement | null>(null)
+  const [startVideoCall, setStartVideoCall] = useState<boolean>(false)
+  const channelChatMessage = pusher.subscribe('private-user.' + auth.user.id)
+
+  // useEffect(() => {
+  //   let box = document.querySelector('.custom-scroll') as HTMLDivElement
+  //   let content = document.querySelector('.custom-scroll-content') as HTMLElement
+  //   let scrollBar = document.querySelector('.scroll-bar') as HTMLDivElement
+  //   let boxHeight = box.offsetHeight
+  //   let contentHeight = content.offsetHeight
+  //   let scrollBarHeight = (boxHeight/contentHeight) * 100
+
+  //   scrollBar.style.height = scrollBarHeight + "%"
+  //   scrollBarHeight = scrollBar.offsetHeight
+
+  //   let percentBar = (scrollBarHeight/boxHeight) * 100
+
+  //   box.addEventListener('scroll', function() {
+  //     let top = (box.scrollTop/100) * percentBar
+  //     scrollBar.style.top = top + 'px'
+  //   })
+  // }, [])
 
   useEffect(() => {
-    let box = document.querySelector('.custom-scroll') as HTMLDivElement
-    let content = document.querySelector('.custom-scroll-content') as HTMLElement
-    let scrollBar = document.querySelector('.scroll-bar') as HTMLDivElement
-    let boxHeight = box.offsetHeight
-    let contentHeight = content.offsetHeight
-    let scrollBarHeight = (boxHeight/contentHeight) * 100
-
-    scrollBar.style.height = scrollBarHeight + "%"
-    scrollBarHeight = scrollBar.offsetHeight
-
-    let percentBar = (scrollBarHeight/boxHeight) * 100
-
-    box.addEventListener('scroll', function() {
-      let top = (box.scrollTop/100) * percentBar
-      scrollBar.style.top = top + 'px'
-    })
-  }, [])
-
-  useEffect(() => {
-    const pusher = new Pusher('2d240a8e1585e1883a5e', {
-      cluster: 'ap3',
-      authEndpoint: '/broadcasting/auth'
-    })
-
-    const channel = pusher.subscribe('private-user.' + auth.user.id)
-    channel.bind('ChatMessagePusherEvent', function({ userSend }: {userSend: messagesType}) {
+    channelChatMessage.bind('ChatMessagePusherEvent', function({ userSend }: {userSend: messagesType}) {
       setMessages((prev: messagesType[]) => [userSend, ...prev])
     })
   }, [])
-
-  function startVideoCall() {
-    getPermissionsVideo()
-    .then(function(stream: any) {
-      setHasMedia(true)
-      try {
-        myVideoRef.current!.srcObject = stream
-      } catch (error) {
-        myVideoRef.current!.src = URL.createObjectURL(stream)
-      }
-      myVideoRef.current!.play()
-    })
-    .catch(err => {
-      throw new Error(`Unable to fetch stream ${err}`)
-    })
-  }
-
-  function stopVideoCall() {
-    myVideoRef.current!.pause()
-    setHasMedia(false)
-  }
 
   function setTargetUser(targetUser: UserType) {
     messageForm.setData('targetId', targetUser.id)
@@ -123,7 +96,8 @@ export default function Room(props: { auth: AuthType, addList: [], friends: User
   return (
     <AuthenticatedLayout auth={auth} addList={props.addList}>
       <Head title="Room" />
-      <div className="flex h-screen pt-16 pb-4">
+      <div className="flex h-screen pt-16">
+        <VideoCall user={auth.user} targetUser={currentTargetUser} videoCall={startVideoCall} setVideoCall={setStartVideoCall} />
         <div className={`${light.borderClass} ${dark.borderClass} w-80 h-full border-r p-4 relative`}>
           <label className="relative block mb-8">
             <span className="sr-only">Search</span>
@@ -139,9 +113,9 @@ export default function Room(props: { auth: AuthType, addList: [], friends: User
               placeholder="Search for my friend..." type="text" name="search"
             />
           </label>
-          <div className="scroll w-2 h-5/6 absolute bg-transparent right-1">
+          {/* <div className="scroll w-2 h-5/6 absolute bg-transparent right-1">
             <div className="scroll-bar w-full bg-gray-300 dark:bg-gray-800 absolute top-0 rounded-lg" />
-          </div>
+          </div> */}
           <div className="custom-scroll relative overflow-auto" style={{height: '90%'}}>
             <ul className="divide-y dark:divide-gray-800 custom-scroll-content">
               {props.friends.map((friend: UserType) => (
@@ -162,11 +136,8 @@ export default function Room(props: { auth: AuthType, addList: [], friends: User
               <div className="h-full">
                 <div className={`${light.borderClass} ${dark.borderClass} border-b p-4 flex justify-between items-center`}>
                   <span className="text-2xl font-medium text-slate-700 dark:text-white">{currentTargetUser.name}</span>
-                  <div>
-                    <span onClick={startVideoCall} className="cursor-pointer"><Video color='white'/></span>
-                  </div>
+                  <span onClick={() => setStartVideoCall(true)} className="cursor-pointer"><Video color='white'/></span>
                 </div>
-                {/* <div className="overflow-auto custom-scroll flex flex-col-reverse" style={{maxHeight: '85%'}}> */}
                 <div className="overflow-auto custom-scroll flex flex-col-reverse" style={{maxHeight: '90%'}}>
                   {!!messages.length && messages.map((userSend: messagesType, index) => {
                     return (
@@ -186,7 +157,7 @@ export default function Room(props: { auth: AuthType, addList: [], friends: User
                   })}
                 </div>
               </div>
-              <div className="px-7 z-10 absolute w-full bottom-0 h-24">
+              <div className="px-7 z-10 absolute w-full bottom-3 h-24">
                 <div className="p-1 px-3 bg-white border dark:bg-gray-900 border-gray-100 dark:border-gray-800 rounded-md">
                   <form onSubmit={submitSendMessage}>
                     <input className="placeholder:italic placeholder:text-slate-400
@@ -206,12 +177,6 @@ export default function Room(props: { auth: AuthType, addList: [], friends: User
                 </div>
               </div>
             </div>
-            {hasMedia &&
-              <div className="fixed z-50 top-2/4 left-2/4 -translate-x-1/2 -translate-y-2/4 border w-3/4 h-3/4 rounded-lg backdrop-blur-md bg-slate-50">
-                <video width={200} height={200} ref={myVideoRef}></video>
-                <button onClick={stopVideoCall} className="w-20 h-20 bg-red-600 rounded-full text-white cursor-pointer">Stop</button>
-              </div>
-            }
           </>
         }
       </div>
