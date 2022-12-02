@@ -26,6 +26,7 @@ export default function VideoCall({user, targetUser, videoCall, setVideoCall}: {
     }).bind("pusher:member_removed", (member: any) => {
       // console.log(member)
     }).bind("client-sdp", function(msg: any) {
+      console.log('client-sdp', msg);
       if(msg.room == user.id) {
         setMsg(msg)
         setShowConfirm(true)
@@ -33,8 +34,10 @@ export default function VideoCall({user, targetUser, videoCall, setVideoCall}: {
     }).bind("client-candidate", function(data: any) {
       if(data.room==room) caller.addIceCandidate(new RTCIceCandidate(data.candidate))
     }).bind("client-answer", function(answer: any) {
+      console.log('client-reject', answer);
       if(answer.room == room) caller.setRemoteDescription(new RTCSessionDescription(answer.sdp))
     }).bind("client-endcall", function(answer: any) {
+      console.log('client-endcall', answer);
       setVideoCall(false)
       setVideoAnser(false)
       setShowConfirm(false)
@@ -43,6 +46,7 @@ export default function VideoCall({user, targetUser, videoCall, setVideoCall}: {
         endCall()
       }
     }).bind("client-reject", function(answer: any) {
+      console.log('client-reject', answer);
       if (answer.room == room) {
         endCall()
         setShowClose(true)
@@ -58,8 +62,10 @@ export default function VideoCall({user, targetUser, videoCall, setVideoCall}: {
         })
       }
     }
-    caller.onaddstream = function(evt: any) {
-      callerVideoRef.current!.srcObject = evt.stream
+    caller.ontrack = function(evt: any) {
+    // caller.onaddstream = function(evt: any) {
+      console.log('onaddstream', evt);
+      callerVideoRef.current!.srcObject = evt.streams[0]
     }
   }, [triggerCaller])
 
@@ -69,7 +75,10 @@ export default function VideoCall({user, targetUser, videoCall, setVideoCall}: {
       .then(function(stream: any) {
         myVideoRef.current!.srcObject = stream
         localUserMedia = stream
-        caller.addStream(stream)
+        // caller.addStream(stream)
+        for (const track of stream.getTracks()) {
+          caller.addTrack(track, stream);
+        }
         caller.createOffer().then(function(desc:any) {
           caller.setLocalDescription(new RTCSessionDescription(desc))
           channelChatVideo.trigger("client-sdp", {
@@ -114,9 +123,11 @@ export default function VideoCall({user, targetUser, videoCall, setVideoCall}: {
       getPermissionsVideo()
       .then((stream: any) => {
         localUserMedia = stream
-        myVideoRef.current!.style.backgroundColor = 'red'
         myVideoRef.current!.srcObject = stream
-        caller.addStream(stream)
+        // caller.addStream(stream)
+        for (const track of stream.getTracks()) {
+          caller.addTrack(track, stream);
+        }
         var sessionDesc = new RTCSessionDescription(msg.sdp)
         caller.setRemoteDescription(sessionDesc)
         caller.createAnswer().then(function(sdp: any) {
@@ -146,9 +157,9 @@ export default function VideoCall({user, targetUser, videoCall, setVideoCall}: {
   return (
     <>
       {(videoCall || videoAnser) &&
-        <div className="fixed z-50 top-2/4 left-2/4 -translate-x-1/2 -translate-y-2/4 h-3/4 rounded-lg overflow-hidden group">
-          <video className="rounded absolute bottom-2 left-2" width={200} height={200} ref={myVideoRef} autoPlay={true}></video>
-          <video className="w-full h-full bg-black" ref={callerVideoRef} autoPlay={true}></video>
+        <div className="fixed z-50 top-2/4 left-2/4 -translate-x-1/2 -translate-y-2/4 w-full h-full lg:w-auto lg:h-3/4 rounded-lg overflow-hidden group">
+          <video className="rounded absolute bottom-2 left-2" width={200} height={200} ref={myVideoRef} autoPlay={true} playsInline={true}></video>
+          <video className="w-full h-full bg-black" ref={callerVideoRef} autoPlay={true} playsInline={true}></video>
           <div className="absolute bottom-5 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition duration-700 ease-in-out">
             <button onClick={stopVideoCall} className="w-16 h-16 p-4 bg-red-600 rounded-full text-white cursor-pointer">Stop</button>
           </div>

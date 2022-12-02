@@ -53,6 +53,7 @@ export default function Room(props: { auth: AuthType, addList: [], friends: User
 
   useEffect(() => {
     channelChatMessage.bind('ChatMessagePusherEvent', function({ userSend }: {userSend: messagesType}) {
+      console.log('userSend >>> ', userSend);
       setMessages((prev: messagesType[]) => [userSend, ...prev])
     })
   }, [])
