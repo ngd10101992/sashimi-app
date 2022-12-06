@@ -1,0 +1,22 @@
+[0;1;32m●[0m docker.service - Docker Application Container Engine
+     Loaded: loaded (]8;;file://GD01/usr/lib/systemd/system/docker.service/usr/lib/systemd/system/docker.service]8;;; disabled; vendor preset: disabled)
+     Active: [0;1;32mactive (running)[0m since Thu 2022-11-24 13:56:02 UTC; 4s ago
+TriggeredBy: [0;1;32m●[0m docker.socket
+       Docs: ]8;;https://docs.docker.comhttps://docs.docker.com]8;;
+   Main PID: 95700 (dockerd)
+      Tasks: 7
+     Memory: 23.5M
+        CPU: 154ms
+     CGroup: /system.slice/docker.service
+             └─[0;38;5;245m95700 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock[0m
+
+Nov 24 13:56:00 GD01 dockerd[95700]: time="2022-11-24T13:56:00.958850185Z" level=info msg="ClientConn switching balancer to \"pick_first\"" module=grpc
+Nov 24 13:56:00 GD01 dockerd[95700]: time="2022-11-24T13:56:00.960404524Z" level=error msg="Failed to built-in GetDriver graph btrfs /var/lib/docker"
+Nov 24 13:56:00 GD01 dockerd[95700]: time="2022-11-24T13:56:00.992414525Z" level=info msg="Loading containers: start."
+Nov 24 13:56:01 GD01 dockerd[95700]: time="2022-11-24T13:56:01.791961487Z" level=info msg="Default bridge (docker0) is assigned with an IP address 172.17.0.0/16. Daemon option --bip can be used to set a preferred IP address"
+Nov 24 13:56:01 GD01 dockerd[95700]: time="2022-11-24T13:56:01.932190973Z" level=info msg="Firewalld: interface docker0 already part of docker zone, returning"
+Nov 24 13:56:02 GD01 dockerd[95700]: time="2022-11-24T13:56:02.040116376Z" level=info msg="Loading containers: done."
+Nov 24 13:56:02 GD01 dockerd[95700]: time="2022-11-24T13:56:02.062929754Z" level=info msg="Docker daemon" commit=3056208 graphdriver(s)=overlay2 version=20.10.21
+Nov 24 13:56:02 GD01 dockerd[95700]: time="2022-11-24T13:56:02.063226550Z" level=info msg="Daemon has completed initialization"
+Nov 24 13:56:02 GD01 systemd[1]: Started Docker Application Container Engine.
+Nov 24 13:56:02 GD01 dockerd[95700]: time="2022-11-24T13:56:02.098387349Z" level=info msg="API listen on /run/docker.sock"
