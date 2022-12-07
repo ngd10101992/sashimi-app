@@ -36,11 +36,12 @@ services:
       - sashimi
 
   nginx:
-    image: nginx:alpine
+    build: ./docker-compose/nginx
     container_name: sashimi-nginx
     restart: unless-stopped
     ports:
       - 80:80
+      - 443:443
     volumes:
       - ./:/var/www
       - ./docker-compose/nginx:/etc/nginx/conf.d/
